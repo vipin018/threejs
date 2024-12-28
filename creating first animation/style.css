@@ -10,10 +10,6 @@ body {
     width: 100%;
 }
 
-body {
-    background-color: #222;
-}
-
 #cube{
     position: absolute;
     top: 0;
