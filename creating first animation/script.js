@@ -20,11 +20,14 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Create a cube geometry with default size (1x1x1) 
-const geometry = new THREE.BoxGeometry(3, 2, 3);
+const geometry = new THREE.BoxGeometry(1,1,1);
 // Create a basic material with a green color
 const material = new THREE.MeshBasicMaterial({ color: "green" });
 // Combine the geometry and material to create a mesh (the cube) 
 const cube = new THREE.Mesh(geometry, material);
+
+cube.position.x = 0; // Set the cube's x position 
+cube.position.z=2; // Set the cube's z position
 // Add the cube to the scene 
 scene.add(cube);
 
@@ -36,7 +39,7 @@ function animate() {
     cube.rotation.x += 0.01;
     // Rotate the cube around the y-axis 
     cube.rotation.y += 0.01;
-    // Rotate the cube around the z-axis
+// Rotate the cube around the z-axis
     cube.rotation.z += 0.01;
     // Render the scene from the perspective of the camera 
     renderer.render(scene, camera);
