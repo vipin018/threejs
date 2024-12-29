@@ -11,10 +11,31 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.TorusKnotGeometry(12, 4, 100);
-const material = new THREE.MeshBasicMaterial({ color: "green", wireframe:false });
-const torusKnot = new THREE.Mesh(geometry, material);
- scene.add(torusKnot);
+const geometry = new THREE.BufferGeometry();
+
+// create a simple square shape. We duplicate the top left and bottom right
+// vertices because each vertex needs to appear once per triangle.
+const vertices = new Float32Array( [
+	-1.0, -1.0,  1.0, // v0
+	 1.0, -1.0,  1.0, // v1
+	 1.0,  1.0,  2.0, // v2
+
+	 4.0,  0.1,  1.0, // v3
+	-1.0,  2.0,  1.0, // v4
+	-1.0, -1.0,  0.0  // v5
+] );
+
+// itemSize = 3 because there are 3 values (components) per vertex
+geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+const mesh = new THREE.Mesh( geometry, material );
+
+scene.add(mesh);
+
+// const geometry = new THREE.TorusKnotGeometry(12, 4, 100);
+// const material = new THREE.MeshBasicMaterial({ color: "green", wireframe:false });
+// const torusKnot = new THREE.Mesh(geometry, material);
+//  scene.add(torusKnot);
 
 
 // Create a cube
@@ -47,7 +68,7 @@ const torusKnot = new THREE.Mesh(geometry, material);
 // cube.rotation.z += Math.PI - 0.2;
 
 // Position camera
-camera.position.z = 50;
+camera.position.z = 5;
 renderer.render(scene, camera);
 
 // Animation loop
