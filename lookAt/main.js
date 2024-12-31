@@ -21,7 +21,7 @@ const material = new THREE.MeshBasicMaterial({color:"red"});
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-const controls = new OrbitControls(camera, renderer.domElement);
+// const controls = new OrbitControls(camera, renderer.domElement);
 // cube.lookAt(-1,-1,0);
 // cube.lookAt(new THREE.Vector3(-0.1, 0.1, 0.1));
 
@@ -30,11 +30,17 @@ const mouse = {
     y: 0,
 }
 
+window.addEventListener('mousemove', function (e) {
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1; // this referes to the mouse position when mouse is moved from left to right
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1; // this referes to the mouse position when mouse is moved from top to bottom
+    cube.rotation.y = mouse.x;
+    cube.rotation.x = -mouse.y;
+})
+
 function animate() {
     requestAnimationFrame(animate);
-    controls.update();
+    // controls.update();
     renderer.render(scene, camera);
-    
 }
 
 animate();
