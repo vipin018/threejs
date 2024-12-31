@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
+import GUI from 'lil-gui';
+
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -35,6 +37,21 @@ scene.add(cube);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+
+const gui = new GUI();
+
+const myObject = {
+	myBoolean: true,
+	myFunction: function() {},
+	myString: 'lil-gui',
+	myNumber: 1
+};
+
+gui.add( myObject, 'myBoolean' );  // Checkbox
+gui.add( myObject, 'myFunction' ); // Button
+gui.add( myObject, 'myString' );   // Text Field
+gui.add( myObject, 'myNumber' );   // Number Field
+
 
 function animate() {
     requestAnimationFrame(animate);
