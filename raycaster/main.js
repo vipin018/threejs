@@ -24,7 +24,7 @@ const box = new THREE.Mesh(boxGeometry, boxMaterial);
 scene.add(box);
 
 // Create a sphere geometry with physical material
-const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+const sphereGeometry = new THREE.SphereGeometry(0.6, 32, 32);
 const sphereMaterial = new THREE.MeshPhysicalMaterial({
   color: 0xff7700,
   roughness: 0.5,
@@ -50,28 +50,44 @@ controls.maxDistance = 10; // Maximum distance from the camera
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-function onPointMove(event){
-  // Calculate mouse position in normalized device coordinates (NDC)
-  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-  pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+let lastIntersected = null;
+const originalGeometries = new Map(); // Store original geometries
 
-  // Perform raycasting
-  raycaster.setFromCamera(pointer, camera);
-  const intersects = raycaster.intersectObjects(scene.children);
+// Store initial geometries
+scene.children.forEach(child => {
+    if (child.isMesh) {
+        originalGeometries.set(child, child.geometry);
+    }
+});
 
-  if (intersects.length > 0) {
-    // Change color of intersected object
-    intersects[0].object.material.emissive = new THREE.Color(0xff0000);
-  } else {
-    // Reset color of all objects
-    scene.children.forEach(child => {
-      if (child.type === 'Mesh') {
-        child.material.emissive.set(0x000000);
-      }
-    });
-  }
+const torusKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.2, 100, 16);
+
+function onPointMove(event) {
+   pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+   pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+   raycaster.setFromCamera(pointer, camera);
+   const intersects = raycaster.intersectObjects(scene.children);
+
+   if (lastIntersected) {
+       lastIntersected.geometry = originalGeometries.get(lastIntersected);
+       lastIntersected.material.roughness = 0.5;
+       lastIntersected.material.metalness = 0.5;
+       lastIntersected.material.clearcoat = 0;
+       lastIntersected.material.emissive.setHex(0x00ff00);
+   }
+
+   if (intersects[0]) {
+       lastIntersected = intersects[0].object;
+       lastIntersected.geometry = torusKnotGeometry;
+       lastIntersected.material.roughness = 0;
+       lastIntersected.material.metalness = 1;
+       lastIntersected.material.clearcoat = 1;
+       lastIntersected.material.emissive.setHex(0xff0000);
+   } else {
+       lastIntersected = null;
+   }
 }
-
 window.addEventListener('mousemove', onPointMove);
 
 // Animation loop
