@@ -1,98 +1,92 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/Addons.js';
-import GUI from 'lil-gui';
-
-
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// Create the scene
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000);
-camera.position.set = (10,1,50);
 
+// Create a camera
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
+
+// Create a renderer
 const canvas = document.querySelector('canvas');
 const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio), 2);
 
 
-const geometry = new THREE.BoxGeometry(1, 2, 1);
-const material = new THREE.MeshBasicMaterial({ color: "red" });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+// Create a box geometry with physical material
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const boxMaterial = new THREE.MeshPhysicalMaterial({
+  color: 0x0077ff,
+  roughness: 0.5,
+  metalness: 0.5
+});
+const box = new THREE.Mesh(boxGeometry, boxMaterial);
+scene.add(box);
 
+// Create a sphere geometry with physical material
+const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+const sphereMaterial = new THREE.MeshPhysicalMaterial({
+  color: 0xff7700,
+  roughness: 0.5,
+  metalness: 0.5
+});
+const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+sphere.position.x = 2; // Position the sphere to the right
+scene.add(sphere);
 
-// const mouse = {
-//     x: 0,
-//     y: 0,
-// }
+// Add studio lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
-// window.addEventListener('mousemove', function (e) {
-//     mouse.x = (e.clientX / window.innerWidth) * 2 - 1; // this referes to the mouse position when mouse is moved from left to right
-//     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1; // this referes to the mouse position when mouse is moved from top to bottom
-//     cube.rotation.y = mouse.x;
-//     cube.rotation.x = -mouse.y;
-// })
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(5, 5, 5);
+scene.add(directionalLight);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
+controls.minDistance = 2; // Minimum distance from the camera
+controls.maxDistance = 10; // Maximum distance from the camera
 
-const gui = new GUI(); // Initialize the GUI
 
-const cubeFolder = gui.addFolder('Cube Properties'); // Create a folder for cube properties
-const cubeParams = {
-    width: 1,
-    height: 2,
-    depth: 1,
-    color: "#ff0000" // Default color
-};
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
 
-// Add controls for width, height, depth, and color
-cubeFolder.add(cubeParams, 'width', 0.1, 5).onChange(updateCubeSize);
-cubeFolder.add(cubeParams, 'height', 0.1, 5).onChange(updateCubeSize);
-cubeFolder.add(cubeParams, 'depth', 0.1, 5).onChange(updateCubeSize);
-cubeFolder.addColor(cubeParams, 'color').onChange(updateCubeColor);
+function onPointMove(event){
+  // Calculate mouse position in normalized device coordinates (NDC)
+  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
-// Add rotation parameters
-const rotationParams = {
-    rotationX: 0,
-    rotationY: 0,
-    rotationZ: 0 // Reset the rotation on the Z axis (as it doesn't make sense for a 3D box)
-};
+  // Perform raycasting
+  raycaster.setFromCamera(pointer, camera);
+  const intersects = raycaster.intersectObjects(scene.children);
 
-// Add controls for rotation
-cubeFolder.add(rotationParams, 'rotationX', 0, Math.PI * 2).onChange(updateCubeRotation);
-cubeFolder.add(rotationParams, 'rotationY', 0, Math.PI * 2).onChange(updateCubeRotation);
-cubeFolder.add(rotationParams, 'rotationZ', 0, Math.PI * 2).onChange(updateCubeRotation);
-cubeFolder.open(); // Open the folder by default
-
-function updateCubeSize() {
-    cube.geometry.dispose(); // Dispose of the old geometry
-    cube.geometry = new THREE.BoxGeometry(cubeParams.width, cubeParams.height, cubeParams.depth); // Create new geometry
+  if (intersects.length > 0) {
+    // Change color of intersected object
+    intersects[0].object.material.emissive = new THREE.Color(0xff0000);
+  } else {
+    // Reset color of all objects
+    scene.children.forEach(child => {
+      if (child.type === 'Mesh') {
+        child.material.emissive.set(0x000000);
+      }
+    });
+  }
 }
 
-function updateCubeColor() {
-    cube.material.color.set(cubeParams.color); // Update the cube's color
-}
+window.addEventListener('mousemove', onPointMove);
 
-function updateCubeRotation() {
-    cube.rotation.x = rotationParams.rotationX; // Update the cube's rotation on the X axis
-    cube.rotation.y = rotationParams.rotationY; // Update the cube's rotation on the Y axis
-    cube.rotation.z = rotationParams.rotationZ ; // Reset the cube's rotation on the Z axis (as it doesn't make sense for a 3D box)
-}
-
+// Animation loop
 function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+  controls.update(); // Update controls
+  renderer.render(scene, camera);
 }
 
 animate();
 
-// window resize event
+
 window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+  // Update camera aspect ratio and renderer size
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });
