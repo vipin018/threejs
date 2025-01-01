@@ -23,7 +23,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const RGBE = new RGBELoader();
 RGBE.load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/dry_orchard_meadow_2k.hdr', (texture) => {
     texture.mapping = THREE.EquirectangularRefractionMapping; // Set mapping type
-    scene.background = texture; // Set the scene background
+    // scene.background = texture; // Set the scene background
     scene.environment = texture; // Set the scene environment
 });
 
@@ -31,6 +31,7 @@ RGBE.load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/dry_orchard_mead
 const loader = new GLTFLoader();
 loader.load('./scifi_gun/scene.gltf', (gltf) => {
     scene.add(gltf.scene);
+    // gltf.scene.position.set(0,10,10);
 });
 
 // Animation loop

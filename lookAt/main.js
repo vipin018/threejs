@@ -9,7 +9,7 @@ const camera = new THREE.PerspectiveCamera(
     window.innerWidth / window.innerHeight,
     0.1,
     1000);
-camera.position.z = 4;
+camera.position.set = (10,1,50);
 
 const canvas = document.querySelector('canvas');
 const renderer = new THREE.WebGLRenderer({ canvas });
