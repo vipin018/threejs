@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import vertex from './shaders/vertex.glsl';
+import fragment from './shaders/fragment.glsl';
 // Initialize scene
 const scene = new THREE.Scene();
 
@@ -14,7 +16,10 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Create a geometry and a material, then combine them into a mesh
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const material = new THREE.ShaderMaterial({
+  vertexShader: vertex,
+  fragmentShader: fragment,
+});
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
