@@ -17,10 +17,15 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // document.body.appendChild(renderer.domElement);
 
 // Create a geometry and a material, then combine them into a mesh
-const geometry = new THREE.BoxGeometry();
+const geometry = new THREE.BoxGeometry(2,2,2,50,50);
 const material = new THREE.ShaderMaterial({
+  // wireframe: true,
   vertexShader: vertex,
   fragmentShader: fragment,
+  side: THREE.DoubleSide,
+  uniforms: {
+    uTime: { value: 0 },
+  },
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
@@ -39,8 +44,9 @@ window.addEventListener('resize', () => {
 function animate() {
   requestAnimationFrame(animate);
   // cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  // cube.rotation.y += 0.01;
   controls.update(); // Update controls
+  material.uniforms.uTime.value += 0.1; // Update shader uniforms
   renderer.render(scene, camera);
 }
 animate();
