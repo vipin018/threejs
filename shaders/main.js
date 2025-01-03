@@ -16,8 +16,13 @@ const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
 // document.body.appendChild(renderer.domElement);
 
+const textureLoader = new THREE.TextureLoader();
+const clothTexture = textureLoader.load('./img.jpg'); // Provide the path to your image
+
+
+
 // Create a geometry and a material, then combine them into a mesh
-const geometry = new THREE.BoxGeometry(2,2,2,50,50);
+const geometry = new THREE.PlaneGeometry(3,3,100,100,);
 const material = new THREE.ShaderMaterial({
   // wireframe: true,
   vertexShader: vertex,
@@ -25,6 +30,7 @@ const material = new THREE.ShaderMaterial({
   side: THREE.DoubleSide,
   uniforms: {
     uTime: { value: 0 },
+    uTexture: { value: clothTexture },
   },
 });
 const cube = new THREE.Mesh(geometry, material);
