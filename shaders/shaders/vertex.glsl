@@ -7,7 +7,7 @@ void main() {
      vNormal = normalize(normalMatrix * normal); // Normalize the normal vector
     vec4 modelPosition = modelMatrix*vec4(position,1.);
 modelPosition.z-=0.3*sin(modelPosition.x*5.+modelPosition.y*3.+uTime)*0.7;
-//modelPosition.z+=sin(modelPosition.x*5.+modelPosition.y*3.)+uTime*0.2;
+//modelPosition.z+=sin(modelPosition.x*5.+modelPosition.y*3.)+uTime*1.9;
     vec4 viewPosition = viewMatrix*modelPosition;
     vec4 projectedPosition = projectionMatrix*viewPosition;
 
