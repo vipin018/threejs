@@ -10,3 +10,4 @@ void main() {
     vec4 finalColor = mix(color1, color2, checker);
     gl_FragColor = finalColor;
 }
+

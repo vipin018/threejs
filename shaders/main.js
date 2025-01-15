@@ -18,7 +18,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 
 // Create a geometry and a material, then combine them into a mesh
-const geometry = new THREE.TorusKnotGeometry(3,3,100,100);
+const geometry = new THREE.IcosahedronGeometry(30,30,30);
 const material = new THREE.ShaderMaterial({
   wireframe: true,
   vertexShader: vertex,

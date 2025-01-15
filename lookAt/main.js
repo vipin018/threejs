@@ -21,8 +21,6 @@ const geometry = new THREE.BoxGeometry(1, 2, 1);
 const material = new THREE.MeshBasicMaterial({ color: "red" });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
-
-
 // const mouse = {
 //     x: 0,
 //     y: 0,
