@@ -3,7 +3,7 @@ import {
     simulateVertexShader,
     renderFragmentShader,
     renderVertexShader
-} from "./shader.js";
+} from "./shader";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         alpha: true,
         preserveDrawingBuffer: true,
     });
-
+});
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -62,4 +62,95 @@ document.addEventListener("DOMContentLoaded", () => {
         fragmentShader: renderFragmentShader,
     });
 
-})
+    const plane = new THREE.PlaneGeometry(2, 2);
+
+    const simMesh = new THREE.Mesh(plane, simMaterial);
+    const renderMesh = new THREE.Mesh(plane, renderMaterial);
+
+    simScene.add(simMesh);
+    scene.add(renderMesh);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d", {
+        alpha: true,
+    });
+
+    ctx.fillStyle = "#fb7427";
+    ctx.fillRect(0, 0, width, height);
+
+    const fontSize = Math.round(250 * window.devicePixelRatio);
+
+    ctx.fillStyle = "#fef4b8";
+    ctx.font = `bold ${fontSize}px "Nunito"`;
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.textRendering = "geometricPrecision";
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.fillText("Tavishaaaaa", width / 2, height / 2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.format = THREE.RGBAFormat;
+
+    window.addEventListener("resize", () => {
+        const newWidth = window.innerWidth * window.devicePixelRatio;
+        const newHeight = window.innerHeight * window.devicePixelRatio;
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        rtA.setSize(newWidth, newHeight);
+        rtB.setSize(newWidth, newHeight);
+
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        ctx.fillStyle = "#fb7427";
+        ctx.fillRect(0, 0, newWidth, newHeight);
+
+        const newFontSize = Math.round(250 * window.devicePixelRatio);
+        ctx.font = `bold ${newFontSize}px "Nunito"`;
+        ctx.fillStyle = "#fef4b8";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Tavishaaaaa", newWidth / 2, newHeight / 2);
+
+        texture.needsUpdate = true;
+    })
+
+    renderer.addEventListener("mousemove", (event) => {
+        mouse.x = event.clientX * window.devicePixelRatio;
+        mouse.y = (window.innerHeight - event.clientY) * window.devicePixelRatio;
+    });
+
+    renderer.addEventListener("mouseleave", () => {
+        mouse.set(0, 0);
+    });
+
+    const animate = () => {
+        simMaterial.uniforms.frame.value = frame++;
+        simMaterial.uniforms.time.value = performance.now() * 0.001;
+
+        simMaterial.uniforms.textureA.value = rtA.texture;
+        renderer.setRenderTarget(rtB);
+        renderer.render(simScene, camera);
+
+        renderMaterial.uniforms.textureA.value = rtB.texture;
+        renderMaterial.uniforms.textureB.value = texture;
+
+        renderer.setRenderTarget(null);
+        renderer.render(scene, camera);
+
+        const temp = rtA;
+        rtA = rtB;
+        rtB = temp;
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+
