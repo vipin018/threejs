@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const mouse = new THREE.Vector2();
     let frame = 0;
-
     const width = window.innerWidth * window.devicePixelRatio;
     const height = window.innerHeight * window.devicePixelRatio;
 
@@ -77,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         alpha: true,
     });
 
-    ctx.fillStyle = "#9DBBDF";
+    ctx.fillStyle = "#4169E1";
     ctx.fillRect(0, 0, width, height);
 
     const fontSize = Math.round(250 * window.devicePixelRatio);
@@ -88,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.textRendering = "geometricPrecision";
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.fillText("paani", width / 2, height / 2);
+    ctx.fillText("Cascade", width / 2, height / 2);
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
@@ -114,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.font = `bold ${newFontSize}px Nunito`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("paani", newWidth / 2, newHeight / 2);
+        ctx.fillText("Cascade", newWidth / 2, newHeight / 2);
 
         texture.needsUpdate = true;
     });
