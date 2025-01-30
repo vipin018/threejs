@@ -1,9 +1,9 @@
 import {
-    simulateFragmentShader,
-    simulateVertexShader,
+    simulationVertexShader,
+    simulationFragmentShader,
     renderFragmentShader,
     renderVertexShader
-} from "./shader";
+} from "./shader.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -17,10 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
         alpha: true,
         preserveDrawingBuffer: true,
     });
-});
+
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
-
     document.body.appendChild(renderer.domElement);
 
     const mouse = new THREE.Vector2();
@@ -36,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         magFilter: THREE.LinearFilter,
         stencilBuffer: false,
         depthBuffer: false,
-    }
+    };
 
     let rtA = new THREE.WebGLRenderTarget(width, height, options);
     let rtB = new THREE.WebGLRenderTarget(width, height, options);
@@ -49,8 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
             time: { value: 0.0 },
             frame: { value: 0.0 },
         },
-        vertexShader: simulateVertexShader,
-        fragmentShader: simulateFragmentShader,
+        vertexShader: simulationVertexShader,
+        fragmentShader: simulationFragmentShader,
     });
 
     const renderMaterial = new THREE.ShaderMaterial({
@@ -60,15 +59,16 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         vertexShader: renderVertexShader,
         fragmentShader: renderFragmentShader,
+        transparent: true,
     });
 
     const plane = new THREE.PlaneGeometry(2, 2);
 
-    const simMesh = new THREE.Mesh(plane, simMaterial);
-    const renderMesh = new THREE.Mesh(plane, renderMaterial);
+    const simQuad = new THREE.Mesh(plane, simMaterial);
+    const renderQuad = new THREE.Mesh(plane, renderMaterial);
 
-    simScene.add(simMesh);
-    scene.add(renderMesh);
+    simScene.add(simQuad);
+    scene.add(renderQuad);
 
     const canvas = document.createElement("canvas");
     canvas.width = width;
@@ -77,22 +77,18 @@ document.addEventListener("DOMContentLoaded", () => {
         alpha: true,
     });
 
-    ctx.fillStyle = "#fb7427";
+    ctx.fillStyle = "#9DBBDF";
     ctx.fillRect(0, 0, width, height);
 
     const fontSize = Math.round(250 * window.devicePixelRatio);
-
-    ctx.fillStyle = "#fef4b8";
-    ctx.font = `bold ${fontSize}px "Nunito"`;
-
+    ctx.fillStyle = "#fff";
+    ctx.font = `bold ${fontSize}px Nunito`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-
     ctx.textRendering = "geometricPrecision";
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-
-    ctx.fillText("Tavishaaaaa", width / 2, height / 2);
+    ctx.fillText("paani", width / 2, height / 2);
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
@@ -106,28 +102,29 @@ document.addEventListener("DOMContentLoaded", () => {
         renderer.setSize(window.innerWidth, window.innerHeight);
         rtA.setSize(newWidth, newHeight);
         rtB.setSize(newWidth, newHeight);
+        simMaterial.uniforms.resolution.value.set(newWidth, newHeight);
 
         canvas.width = newWidth;
         canvas.height = newHeight;
-        ctx.fillStyle = "#fb7427";
+        ctx.fillStyle = "#ff0000";
         ctx.fillRect(0, 0, newWidth, newHeight);
 
         const newFontSize = Math.round(250 * window.devicePixelRatio);
-        ctx.font = `bold ${newFontSize}px "Nunito"`;
-        ctx.fillStyle = "#fef4b8";
+        ctx.fillStyle = "#ff0000";
+        ctx.font = `bold ${newFontSize}px Nunito`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("Tavishaaaaa", newWidth / 2, newHeight / 2);
+        ctx.fillText("paani", newWidth / 2, newHeight / 2);
 
         texture.needsUpdate = true;
-    })
+    });
 
-    renderer.addEventListener("mousemove", (event) => {
+    renderer.domElement.addEventListener("mousemove", (event) => {
         mouse.x = event.clientX * window.devicePixelRatio;
         mouse.y = (window.innerHeight - event.clientY) * window.devicePixelRatio;
     });
 
-    renderer.addEventListener("mouseleave", () => {
+    renderer.domElement.addEventListener("mouseleave", () => {
         mouse.set(0, 0);
     });
 
@@ -153,4 +150,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     animate();
-
+});

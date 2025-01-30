@@ -8,12 +8,11 @@ void main(){
 `;
 
 export const simulationFragmentShader = `
-
 uniform sampler2D textureA;
 uniform vec2 mouse;
 uniform vec2 resolution;
 uniform float time;
-uniform float frame;
+uniform int frame;
 
 varying vec2 vUv;
 
@@ -21,10 +20,10 @@ const float delta = 1.4;
 
 void main(){
     vec2 uv = vUv;
-   
-    if(frame == 0){
-    gl_FragColor = vec4(0.0);
-    return;
+
+    if(float(frame) == 0.0){  // Explicit conversion to float
+        gl_FragColor = vec4(0.0);
+        return;
     }
 
     vec4 data = texture2D(textureA, uv);
@@ -34,47 +33,42 @@ void main(){
     vec2 texelSize = 1.0 / resolution;
 
     float p_right = texture2D(textureA, uv + vec2(texelSize.x, 0.0)).x;
-    float p_left = texture2D(textureA, uv + vec2(texelSize.x, 0.0)).x;
+    float p_left = texture2D(textureA, uv - vec2(texelSize.x, 0.0)).x;
     float p_top = texture2D(textureA, uv + vec2(0.0, texelSize.y)).x;
-    float p_bottom = texture2D(textureA, uv + vec2(0.0, -texelSize.y)).x;
+    float p_bottom = texture2D(textureA, uv - vec2(0.0, texelSize.y)).x;
 
     if(uv.x <= texelSize.x) {
-    p_left = p_right;
+        p_left = p_right;
     }
     if(uv.x >= 1.0 - texelSize.x) {
-    p_right = p_left;
+        p_right = p_left;
     }
     if(uv.y <= texelSize.y) {
-    p_bottom = p_top;
+        p_bottom = p_top;
     }
     if(uv.y >= 1.0 - texelSize.y) {
-    p_top = p_bottom;
+        p_top = p_bottom;
     }
 
-    pVel += delta * (-2.0 * pressure + p_right + p_left)/4.0;
-    pVel += delta * (-2.0 * pressure + p_top + p_bottom)/4.0;
+    pVel += delta * (-2.0 * pressure + p_right + p_left) / 4.0;
+    pVel += delta * (-2.0 * pressure + p_top + p_bottom) / 4.0;
 
-   pressure += delta * pVel;
+    pressure += delta * pVel;
+    pVel -= 0.005 * delta * pressure;
+    pVel *= 1.0 - 0.002 * delta;
+    pressure *= 0.999;
 
-   pVel -= 0.005 * delta * pressure;
+    vec2 mouse_uv = mouse / resolution;
 
-   pVel *= 1.0 - 0.002 * delta;
-   pressure *= 0.999;
+    if(mouse.x > 0.0){
+        float dist = distance(uv, mouse_uv);
+        if(dist <= 0.02){  
+            pressure += 2.0 * (1.0 - dist / 0.02); 
+        }
+    }
 
-   vec2 mouse_uv = mouse / resolution;
-
-   if(mouse.x >0.0){
-   float dist = distance(uv, mouse_uv);
-   if(dist <= 0.02){  
-   pressure += 2.0 * (1.0 - dist / 0.02); 
-   }
+    gl_FragColor = vec4(pressure, pVel, (p_right - p_left) / 2.0, (p_top - p_bottom) / 2.0);
 }
-
-gl_FragColor = vec4(pressure, pVel,
-
-(p_right - p_left) / 2.0,
-
-)
 `;
 
 export const renderVertexShader = `
@@ -87,27 +81,22 @@ void main(){
 `;
 
 export const renderFragmentShader = ` 
-
 uniform sampler2D textureA;
 uniform sampler2D textureB;
 
 varying vec2 vUv;
 
 void main(){
+    vec4 data = texture2D(textureA, vUv);
 
-vec4 data = texture2D(textureA, vUv);
+    vec2 distortion = 0.3 * data.zw;
 
-vec2 distortion = 0.3* data.zw;
+    vec4 color = texture2D(textureB, vUv + distortion);
 
-vec4 color = texture2D(textureB, vUv + distortion);
+    vec3 normal = normalize(vec3(-data.z * 2.0, 0.5, -data.w * 2.0));
+    vec3 lightDir = normalize(vec3(-3.0, 10.0, 3.0));
+    float specular = pow(max(0.0, dot(normal, lightDir)), 60.0) * 1.5;
 
-vec3 normal = normalize(vec3(-data.z*2.0, 0.5, -data.w*2.0));
-vec3 lightDir = normalize(vec3(-3.0, 10.0, 3.0));
-float specular = pow(max(0.0, dot(normal, lightDir)), 60.0)*1.5;
-
-
-gl_FragColor = color + vec4(specular);
-
+    gl_FragColor = color + vec4(specular);
 }
-
-`
+`;
