@@ -105,11 +105,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         canvas.width = newWidth;
         canvas.height = newHeight;
-        ctx.fillStyle = "#ff0000";
+        ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, newWidth, newHeight);
 
         const newFontSize = Math.round(250 * window.devicePixelRatio);
-        ctx.fillStyle = "#ff0000";
+        ctx.fillStyle = "#ooo";
         ctx.font = `bold ${newFontSize}px Nunito`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";

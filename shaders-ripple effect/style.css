@@ -52,9 +52,17 @@ button{
     border-radius: 2rem;
     padding: 0.5rem 1rem;
     cursor: pointer;
-    box-shadow: 0 0 100px #fff;
+    box-shadow: 0 0 10px #fff;
 }
 
+/* .page{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+} */
 
 footer{
     position: fixed;
