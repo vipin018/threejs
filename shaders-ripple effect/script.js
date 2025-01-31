@@ -76,18 +76,18 @@ document.addEventListener("DOMContentLoaded", () => {
         alpha: true,
     });
 
-    ctx.fillStyle = "#2E8B57";
+    ctx.fillStyle = "#F7F7F7 ";
     ctx.fillRect(0, 0, width, height);
 
-    const fontSize = Math.round(200 * window.devicePixelRatio);
-    ctx.fillStyle = "#FFD700";
-    ctx.font = `bold ${fontSize}px Arial`;
+    const fontSize = Math.round(250 * window.devicePixelRatio);
+    ctx.fillStyle = "#111111 ";
+    ctx.font = `bold ${fontSize}px Roboto`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.textRendering = "geometricPrecision";
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.fillText("AquaFlow", width / 2, height / 2);
+    ctx.fillText("H₂Oh!No", width / 2, height / 2);
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
@@ -105,15 +105,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         canvas.width = newWidth;
         canvas.height = newHeight;
-        ctx.fillStyle = "#2E8B57";
+        ctx.fillStyle = "#F5F5F5";
         ctx.fillRect(0, 0, newWidth, newHeight);
 
-        const newFontSize = Math.round(200 * window.devicePixelRatio);
-        ctx.fillStyle = "#FFD700";
-        ctx.font = `bold ${newFontSize}px Arial`;
+        const newFontSize = Math.round(250 * window.devicePixelRatio);
+        ctx.fillStyle = "#333333";
+        ctx.font = `bold ${newFontSize}px Manrope`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("AquaFlow", newWidth / 2, newHeight / 2);
+        ctx.fillText("H2OhNo", newWidth / 2, newHeight / 2);
 
         texture.needsUpdate = true;
     });
