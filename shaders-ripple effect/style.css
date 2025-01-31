@@ -9,7 +9,7 @@ body {
     height: 100%;
     width: 100%;
     background-color: #000;
-    color: #fff;
+    color:#FFD700;
     font-family: 'Nunito', sans-serif;
 }
 
@@ -45,14 +45,14 @@ nav{
 
 button{
     outline: none;
-    border: 2px solid #fff;
+    border: 2px solid #FFD700;
     background-color: transparent;
-    color: #fff;
+    color: #FFD700;
     font-size: 1.2rem;
     border-radius: 2rem;
     padding: 0.5rem 1rem;
     cursor: pointer;
-    box-shadow: 0 0 10px #fff;
+    /* box-shadow: 0 0 10px #FFD700; */
 }
 
 /* .page{
